@@ -84,7 +84,7 @@ class Interpreter:
     def __init__(
         self,
         working_dir: Path | str,
-        timeout: int = 120, #3600,
+        timeout: int = 300, #3600,
         format_tb_ipython: bool = False,
         agent_file_name: str = "runfile.py",
     ):

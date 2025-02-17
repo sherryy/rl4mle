@@ -11,42 +11,6 @@ from tqdm import tqdm
 from verl.utils.hdfs_io import copy, makedirs
 import argparse
 
-prompt = """<|im_start|>system
-You are given a machine learning task. You must solve the task by training a model and running the model on the test set to produce a submission file.<|im_end|>
-<|im_start|>user
-First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
-
-- Datasets train.csv and test.csv are available in `/home/sherryy/.cache/mle-bench/data/spaceship-titanic/prepared/public/`.
-- You MUST produce a submission file at `/home/sherryy/tmp/workspace/submission.csv` by running your model on the test split.
-- Achieve the best classification accuracy on the test split.
-- Your can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
-- submission.csv should have the following format:
-
-```
-PassengerId,Transported
-0013_01,False
-0018_01,False
-etc.
-```
-
-Train and test data snippet:
--> /home/sherryy/.cache/mle-bench/data/spaceship-titanic/prepared/public/train.csv has 7823 rows and 14 columns.
-Age (float64) has range: 0.00 - 79.00
-Cabin (object) has 5992 unique values. Some example values: ['B/201/P', 'B/11/S', 'F/1194/P', 'F/1411/P']
-CryoSleep (object) has 2 unique values: [True, False, nan]
-Destination (object) has 3 unique values: ['TRAPPIST-1e', 'PSO J318.5-22', '55 Cancri e', nan]
-FoodCourt (float64) has range: 0.00 - 27723.00
-HomePlanet (object) has 3 unique values: ['Mars', 'Europa', 'Earth', nan]
-Name (object) has 7625 unique values. Some example values: ['Anton Woody', 'Ankalik Nateansive', 'Dia Cartez', 'Asch Stradick']
-PassengerId (object) has 7823 unique values. Some example values: ['2930_01', '4408_01', '7710_01', '7709_02']
-RoomService (float64) has range: 0.00 - 14327.00
-ShoppingMall (float64) has range: 0.00 - 23492.00
-Spa (float64) has range: 0.00 - 22408.00
-Transported (bool) is 50.44% True, 49.56% False
-VIP (object) has 2 unique values: [False, True, nan]
-VRDeck (float64) has range: 0.00 - 24133.00
-<|im_end|>
-<|im_start|>assistant"""
 
 def gen_dataset(
     num_samples: int,
@@ -114,6 +78,7 @@ if __name__ == '__main__':
     parser.add_argument('--train_size', type=int, default=327680)
     parser.add_argument('--test_size', type=int, default=1024)
     parser.add_argument('--template_type', type=str, default='base')
+    parser.add_argument('--competition_id', type=str, default='spaceship-titanic')
 
     args = parser.parse_args()
 
@@ -126,6 +91,8 @@ if __name__ == '__main__':
     assert len(raw_dataset) > TRAIN_SIZE + TEST_SIZE
     train_dataset = raw_dataset.select(range(TRAIN_SIZE))
     test_dataset = raw_dataset.select(range(TRAIN_SIZE, TRAIN_SIZE + TEST_SIZE))
+
+    prompt = open(f'/home/sherryy/TinyZero/examples/data_preprocess/{args.competition_id}.txt').read()
 
     def make_map_fn(split):
         def process_fn(example, idx):
@@ -143,7 +110,7 @@ if __name__ == '__main__':
                 "ability": "math",
                 "reward_model": {
                     "style": "rule",
-                    "ground_truth": solution
+                    "ground_truth": args.competition_id
                 },
                 "extra_info": {
                     'split': split,

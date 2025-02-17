@@ -118,12 +118,13 @@ def compute_score(solution_str, ground_truth, has_submission_score=0.1, valid_su
         return 0
 
     res = interpreter.run(code)
+    interpreter.cleanup_session()
 
     if not Path(f"{workspace_dir}/submission.csv").exists():
         print("REWARD", 0)
         return 0
 
-    cmd = f"mlebench grade-sample {workspace_dir}/submission.csv spaceship-titanic"
+    cmd = f"mlebench grade-sample {workspace_dir}/submission.csv {ground_truth}"
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     result = '{' + result.stderr.split('{')[1]
     result = json.loads(result)
