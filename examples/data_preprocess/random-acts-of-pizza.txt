@@ -4,7 +4,7 @@ You are given a machine learning task. You must solve the task by training a mod
 First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
 
 - Datasets train.json and test.json are available in `/home/sherryy/.cache/mle-bench/data/random-acts-of-pizza/prepared/public/`.
-- You MUST produce a submission file at `/home/sherryy/tmp/workspace/submission.csv` by running your model on the test split.
+- You MUST produce a submission file at `./submission.csv` by running your model on the test split.
 - Your task is to predict the probability that a request resulted in a free pizza.
 - Submissions are evaluated on the ROC curve between the predicted probability and the observed outcomes.
 - Your can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.

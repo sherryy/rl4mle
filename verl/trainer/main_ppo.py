@@ -17,8 +17,11 @@ Note that we don't combine the main with ray_trainer as ray_trainer is used by o
 
 from verl import DataProto
 import torch
+import ray
+import hydra
 from verl.utils.reward_score import gsm8k, math, multiply, countdown, mlebench
 from verl.trainer.ppo.ray_trainer import RayPPOTrainer
+import shutil
 
 
 def _select_rm_score_fn(data_source):
@@ -36,7 +39,67 @@ def _select_rm_score_fn(data_source):
         raise NotImplementedError
 
 
-class RewardManager():
+@ray.remote
+def compute_single_reward(
+    data_item,
+    tokenizer,
+    max_prints_per_data_source,
+    data_source_print_counter
+):
+    """
+    This function will run on a Ray worker. It takes a single data_item and
+    returns (score, data_source_print_counter_update, index) so the calling
+    code knows where to store the score and how many times we printed.
+    """
+    # Extract relevant pieces
+    prompt_ids = data_item.batch['prompts']
+    prompt_length = prompt_ids.shape[-1]
+    valid_prompt_length = data_item.batch['attention_mask'][:prompt_length].sum()
+    valid_prompt_ids = prompt_ids[-valid_prompt_length:]
+
+    response_ids = data_item.batch['responses']
+    valid_response_length = data_item.batch['attention_mask'][prompt_length:].sum()
+    valid_response_ids = response_ids[:valid_response_length]
+
+    # Decode
+    sequences = torch.cat((valid_prompt_ids, valid_response_ids))
+    sequences_str = tokenizer.decode(sequences)
+
+    ground_truth = data_item.non_tensor_batch['reward_model']['ground_truth']
+    data_source = data_item.non_tensor_batch['data_source']
+
+    # Your existing score fn
+    from verl.utils.reward_score import gsm8k, math, multiply, countdown, mlebench
+    def _select_rm_score_fn(source):
+        if source == 'openai/gsm8k':
+            return gsm8k.compute_score
+        elif source == 'lighteval/MATH':
+            return math.compute_score
+        elif "multiply" in source or "arithmetic" in source:
+            return multiply.compute_score
+        elif "countdown" in source:
+            return countdown.compute_score
+        elif "mlebench" in source:
+            return mlebench.compute_score
+        else:
+            raise NotImplementedError
+
+    compute_score_fn = _select_rm_score_fn(data_source)
+    score = compute_score_fn(solution_str=sequences_str, ground_truth=ground_truth)
+
+    # Handle printing. Because we are in parallel, you need a concurrency-
+    # safe way to limit prints. This is simplified; you may want a more
+    # robust approach (e.g. a central coordinator).
+    old_count = data_source_print_counter.get(data_source, 0)
+    if old_count < max_prints_per_data_source:
+        print(f"[DataSource: {data_source}, Count={old_count}] {sequences_str}")
+        data_source_print_counter[data_source] = old_count + 1
+
+    # Return all needed info
+    return score, data_source_print_counter
+
+
+class RewardManagerSingleThread():
     """The reward manager.
     """
 
@@ -91,13 +154,71 @@ class RewardManager():
 
         return reward_tensor
 
+class RewardManager():
+    """The reward manager.
+    """
 
-import ray
-import hydra
+    def __init__(self, tokenizer, num_examine) -> None:
+        self.tokenizer = tokenizer
+        self.num_examine = num_examine  # times to print for each data source
 
+    def __call__(self, data: DataProto):
+        # If there is rm score, we directly return it.
+        if 'rm_scores' in data.batch:
+            return data.batch['rm_scores']
+
+        # Prepare a tensor for final rewards
+        reward_tensor = torch.zeros_like(data.batch['responses'], dtype=torch.float32)
+
+        # We'll store references to Ray tasks here
+        task_refs = []
+
+        # We also keep track of counters in each task
+        # so that each item can decide whether it should print.
+        # Each remote call modifies its local copy and returns it,
+        # but to keep logic simple we can just pass an empty dict
+        # each time or incorporate some more advanced approach.
+        # Here, we pass an empty dict so that each item can do
+        # printing up to `self.num_examine` times. You probably
+        # want something more global than that, but this is an example.
+        data_source_print_counter = {}
+
+        # Launch all tasks in parallel
+        for i in range(len(data)):
+            data_item = data[i]  # DataProtoItem
+            # We pass everything needed to the remote function
+            ref = compute_single_reward.remote(
+                data_item=data_item,
+                tokenizer=self.tokenizer,
+                max_prints_per_data_source=self.num_examine,
+                data_source_print_counter=data_source_print_counter
+            )
+            task_refs.append((i, ref))
+
+        timeout_seconds = 2 * 60
+        results = []
+        for i, ref in task_refs:
+            try:
+                result = ray.get(ref, timeout=timeout_seconds)
+                results.append((i, result))
+            except ray.exceptions.GetTimeoutError:
+                # Handle the timeout
+                print(f"Warning: compute_single_reward timed out after {timeout_seconds} seconds.")
+                # Optional: ray.cancel(ref, force=True)
+                # Default result if timed out:
+                results.append((i, (0.0, {})))
+        for i, (score, _) in results:
+            # For simplicity, put the entire score at the last token index
+            # or however you did it in your code
+            prompt_length = data[i].batch['prompts'].shape[-1]
+            valid_response_length = data[i].batch['attention_mask'][prompt_length:].sum()
+            reward_tensor[i, valid_response_length - 1] = score
+
+        return reward_tensor
 
 @hydra.main(config_path='config', config_name='ppo_trainer', version_base=None)
 def main(config):
+    shutil.rmtree('/home/sherryy/tmp/workspace')
     if not ray.is_initialized():
         # this is for local ray cluster
         ray.init(runtime_env={'env_vars': {'TOKENIZERS_PARALLELISM': 'true', 'NCCL_DEBUG': 'WARN'}})
@@ -173,7 +294,7 @@ def main_task(config):
         role_worker_mapping[Role.RewardModel] = ray.remote(RewardModelWorker)
         mapping[Role.RewardModel] = global_pool_id
 
-    reward_fn = RewardManager(tokenizer=tokenizer, num_examine=0)
+    reward_fn = RewardManager(tokenizer=tokenizer, num_examine=1)
 
     # Note that we always use function-based RM for validation
     val_reward_fn = RewardManager(tokenizer=tokenizer, num_examine=1)

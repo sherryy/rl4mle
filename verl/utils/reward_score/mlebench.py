@@ -5,11 +5,10 @@ import black
 import subprocess
 from pathlib import Path
 import shutil
+import uuid
 from verl.utils.reward_score.interpreter import Interpreter
 
 workspace_dir = '/home/sherryy/tmp/workspace'
-
-interpreter = Interpreter(workspace_dir)
 
 def wrap_code(code: str, lang="python") -> str:
     """Wraps code with three backticks."""
@@ -99,8 +98,9 @@ def format_code(code) -> str:
 
 
 def compute_score(solution_str, ground_truth, has_submission_score=0.1, valid_submission_score=0.2):
-    shutil.rmtree(workspace_dir)
-    os.mkdir(workspace_dir)
+    run_dir = Path(workspace_dir) / f"run_{uuid.uuid4().hex}"
+    interpreter = Interpreter(run_dir)
+
     # Remove everything before the first "Assistant:"
     if "Assistant:" in solution_str:
         solution_str = solution_str.split("Assistant:", 1)[1]
@@ -109,7 +109,7 @@ def compute_score(solution_str, ground_truth, has_submission_score=0.1, valid_su
     else:
         print("[WARN] wrong assistant format")
         return 0
-    
+
     code = extract_code(solution_str)
     nl_text = extract_text_up_to_code(solution_str)
 
@@ -120,21 +120,23 @@ def compute_score(solution_str, ground_truth, has_submission_score=0.1, valid_su
     res = interpreter.run(code)
     interpreter.cleanup_session()
 
-    if not Path(f"{workspace_dir}/submission.csv").exists():
-        print("REWARD", 0)
+    submission_file = run_dir / "submission.csv"
+    if not submission_file.exists():
+        print("REWARD", "no submission.csv")
         return 0
 
-    cmd = f"mlebench grade-sample {workspace_dir}/submission.csv {ground_truth}"
+    cmd = f"mlebench grade-sample {submission_file} {ground_truth}"
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     result = '{' + result.stderr.split('{')[1]
     result = json.loads(result)
+
+    #shutil.rmtree(run_dir, ignore_errors=True)
+
     if result["score"]:
-        print("REWARD", result["score"])        
+        print("REWARD", result["score"])
         return result["score"]
     if result["valid_submission"]:
         print("REWARD", "valid_submission")
         return valid_submission_score
-    print("REWARD", "has_submission")    
+    print("REWARD", "has_submission")
     return has_submission_score
-
-
