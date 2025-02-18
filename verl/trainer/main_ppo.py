@@ -158,9 +158,10 @@ class RewardManager():
     """The reward manager.
     """
 
-    def __init__(self, tokenizer, num_examine) -> None:
+    def __init__(self, tokenizer, num_examine, timeout=300) -> None:
         self.tokenizer = tokenizer
         self.num_examine = num_examine  # times to print for each data source
+        self.timeout = timeout
 
     def __call__(self, data: DataProto):
         # If there is rm score, we directly return it.
@@ -195,15 +196,14 @@ class RewardManager():
             )
             task_refs.append((i, ref))
 
-        timeout_seconds = 2 * 60
         results = []
         for i, ref in task_refs:
             try:
-                result = ray.get(ref, timeout=timeout_seconds)
+                result = ray.get(ref, timeout=self.timeout)
                 results.append((i, result))
             except ray.exceptions.GetTimeoutError:
                 # Handle the timeout
-                print(f"Warning: compute_single_reward timed out after {timeout_seconds} seconds.")
+                print(f"Warning: compute_single_reward timed out after {self.timeout} seconds.")
                 # Optional: ray.cancel(ref, force=True)
                 # Default result if timed out:
                 results.append((i, (0.0, {})))
@@ -294,7 +294,7 @@ def main_task(config):
         role_worker_mapping[Role.RewardModel] = ray.remote(RewardModelWorker)
         mapping[Role.RewardModel] = global_pool_id
 
-    reward_fn = RewardManager(tokenizer=tokenizer, num_examine=1)
+    reward_fn = RewardManager(tokenizer=tokenizer, num_examine=0, timeout=config.reward_model.timeout)
 
     # Note that we always use function-based RM for validation
     val_reward_fn = RewardManager(tokenizer=tokenizer, num_examine=1)
