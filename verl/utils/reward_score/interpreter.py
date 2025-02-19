@@ -80,6 +80,8 @@ class Interpreter:
 
         logger.info(f"Running code in-process (reset_session={reset_session}).")
 
+        os.environ["CUDA_VISIBLE_DEVICES"] = "5,6,7,8,9,10,11,12,13,14,15"
+
         if reset_session:
             self._global_scope = {}
 
