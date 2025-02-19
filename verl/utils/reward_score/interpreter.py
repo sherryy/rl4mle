@@ -76,11 +76,9 @@ class Interpreter:
         Returns:
             ExecutionResult: Object containing stdout/stderr, exec time, exception info, etc.
         """
-        os.environ["CUDA_VISIBLE_DEVICES"] = "5,6,7,8,9,10,11,12,13,14,15"
+        os.environ["CUDA_VISIBLE_DEVICES"] = ','.join([str(i) for i in range(4,16)])
 
         logger.info(f"Running code in-process (reset_session={reset_session}).")
-
-        os.environ["CUDA_VISIBLE_DEVICES"] = "5,6,7,8,9,10,11,12,13,14,15"
 
         if reset_session:
             self._global_scope = {}

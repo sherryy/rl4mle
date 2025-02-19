@@ -16,7 +16,6 @@ actor_rollout_ref.rollout.gpu_memory_utilization=0.2 \
 actor_rollout_ref.ref.log_prob_micro_batch_size=4 \
 critic.optim.lr=1e-5 \
 critic.model.path=$BASE_MODEL \
-critic.model.enable_gradient_checkpointing=True \
 critic.ppo_micro_batch_size=4 \
 algorithm.kl_ctrl.kl_coef=0.001 \
 trainer.logger=['wandb'] \
