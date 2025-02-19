@@ -22,6 +22,7 @@ import hydra
 from verl.utils.reward_score import gsm8k, math, multiply, countdown, mlebench
 from verl.trainer.ppo.ray_trainer import RayPPOTrainer
 import shutil
+import os
 
 
 def _select_rm_score_fn(data_source):
@@ -218,7 +219,9 @@ class RewardManager():
 
 @hydra.main(config_path='config', config_name='ppo_trainer', version_base=None)
 def main(config):
-    shutil.rmtree('/home/sherryy/tmp/workspace')
+    workspace_dir = '/home/sherryy/tmp/workspace'
+    if os.path.exists(workspace_dir):
+        shutil.rmtree(workspace_dir)
     if not ray.is_initialized():
         # this is for local ray cluster
         ray.init(runtime_env={'env_vars': {'TOKENIZERS_PARALLELISM': 'true', 'NCCL_DEBUG': 'WARN'}})
