@@ -294,7 +294,7 @@ def main_task(config):
         role_worker_mapping[Role.RewardModel] = ray.remote(RewardModelWorker)
         mapping[Role.RewardModel] = global_pool_id
 
-    reward_fn = RewardManager(tokenizer=tokenizer, num_examine=0, timeout=config.reward_model.timeout)
+    reward_fn = RewardManager(tokenizer=tokenizer, num_examine=0, timeout=config.data.timeout)
 
     # Note that we always use function-based RM for validation
     val_reward_fn = RewardManager(tokenizer=tokenizer, num_examine=1)
