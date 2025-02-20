@@ -1,0 +1,21 @@
+<|im_start|>system
+You are given a machine learning task. You must solve the task by training a model and running the model on the test set to produce a submission file.<|im_end|>
+<|im_start|>user
+First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
+
+- Datasets train.csv, images in train/, and test/ are available in `/home/sherryy/.cache/mle-bench/data/whale-categorization-playground/prepared/public/`.
+- You MUST produce a submission file at `./submission.csv` by running your model on the test images.
+- Your task is to predict up to 5 whale Id labels for each image in the test set, ordered by confidence. If a whale is not in the training data, include new_whale in the predictions.
+- Submissions are evaluated on Mean Average Precision @ 5 (MAP@5).
+- You can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
+- submission.csv should have the following format:
+```
+Image,Id
+00029b3a.jpg,new_whale w_1287fbc w_98baff9 w_7554f44 w_1eafe46
+etc.
+```
+- Train data snippet:
+-> `/home/sherryy/.cache/mle-bench/data/whale-categorization-playground/prepared/public/train.csv` has 7240 rows with columns Image (object) and Id (object).
+Image has 7240 unique values (filenames), Id has 4029 unique values including 'new_whale'.
+Images are stored in train/ and test/ directories.
+<|im_end|>

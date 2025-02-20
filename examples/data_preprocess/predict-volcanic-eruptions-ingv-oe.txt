@@ -1,0 +1,22 @@
+<|im_start|>system
+You are given a machine learning task. You must solve the task by training a model and running the model on the test set to produce a submission file.<|im_end|>
+<|im_start|>user
+First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
+
+- The training data is in `/home/sherryy/.cache/mle-bench/data/predict-volcanic-eruptions-ingv-oe/prepared/public/train.csv` (segment IDs and time to eruption) and `/home/sherryy/.cache/mle-bench/data/predict-volcanic-eruptions-ingv-oe/prepared/public/train/` (sensor data CSV files).
+- The test data is in `/home/sherryy/.cache/mle-bench/data/predict-volcanic-eruptions-ingv-oe/prepared/public/test/` (sensor data CSV files).
+- You MUST produce a submission file at `./submission.csv` with predictions for the test segments.
+- Your task is to predict the time until the next volcanic eruption for each test segment.
+- Submissions are evaluated on the mean absolute error (MAE).
+- Available packages: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
+- submission.csv format:
+```
+segment_id,time_to_eruption
+1,1
+2,2
+etc.
+```
+- Data snippet:
+Train segments: 3987
+Each segment CSV has 60001 rows × 10 sensors
+<|im_end|>

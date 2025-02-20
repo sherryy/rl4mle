@@ -1,0 +1,14 @@
+<|im_start|>system
+You are given a machine learning task. You must solve the task by training a model and running the model on the test set to produce a submission file.<|im_end|>
+<|im_start|>user
+First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```). Note:
+
+- Datasets train.csv and test.csv are available in `/home/sherryy/.cache/mle-bench/data/detecting-insults-in-social-commentary/prepared/public/`.
+- You MUST produce a submission file at `./submission.csv` by running your model on the test split.
+- Your task is to predict the probability (0 to 1) that a comment is an insult. Predictions are evaluated using AUC.
+- You can use pre-installed packages like `scikit-learn`, `lightGBM`, `xgboost`, `pandas`, `numpy`, `torch`, etc.
+- Your final submission should match the format of the `/home/sherryy/.cache/mle-bench/data/detecting-insults-in-social-commentary/prepared/public/sample_submission_null.csv`, which has columns `Date,Comment,Insult`.
+- Data snippet:
+-> input/train.csv has 3947 rows and 3 columns: [Date, Comment, Insult].
+-> input/test.csv has 2647 rows and 2 columns: [Date, Comment].
+<|im_end|>

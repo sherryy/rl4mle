@@ -1,0 +1,21 @@
+<|im_start|>system
+You are given a machine learning task. You must solve the task by training a model and running the model on the test set to produce a submission file.<|im_end|>
+<|im_start|>user
+First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
+
+- Datasets train2/ and test2/ with .aif clips are available in `/home/sherryy/.cache/mle-bench/data/the-icml-2013-whale-challenge-right-whale-redux/prepared/public/`.
+- You MUST produce a submission file at `./submission.csv` by running your model on the test split.
+- Your task is to predict the probability of right whale calls in each test clip.
+- Submissions are evaluated on the ROC curve between predicted probabilities and actual outcomes.
+- You can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
+- submission.csv should have the following format:
+```
+clip,probability
+20090404_000000_012s0ms_Test0.aif,0
+20090404_000000_042s6ms_Test1.aif,0
+etc.
+```
+- Data snippet:
+-> /home/sherryy/.cache/mle-bench/data/the-icml-2013-whale-challenge-right-whale-redux/prepared/public/train2/ contains 22688 .aif files; filenames ending in "_1.aif" indicate whale calls, "_0.aif" indicate noise.
+-> /home/sherryy/.cache/mle-bench/data/the-icml-2013-whale-challenge-right-whale-redux/prepared/public/test2/ contains 25149 .aif files for prediction.
+<|im_end|>
