@@ -24,6 +24,15 @@ from verl.trainer.ppo.ray_trainer import RayPPOTrainer
 import shutil
 import os
 
+ALL_TASKS = ['random-acts-of-pizza',
+             'tweet-sentiment-extraction',
+             'spooky-author-identification',
+             'learning-agency-lab-automated-essay-scoring-2',
+             'leaf-classification',
+             'aerial-cactus-identification',
+             'detecting-insults-in-social-commentary',
+             'the-icml-2013-whale-challenge-right-whale-redux',
+             'spaceship-titanic']
 
 def _select_rm_score_fn(data_source):
     if data_source == 'openai/gsm8k':
@@ -34,7 +43,7 @@ def _select_rm_score_fn(data_source):
         return multiply.compute_score
     elif "countdown" in data_source:
         return countdown.compute_score
-    elif "mlebench" in data_source:
+    elif data_source in ALL_TASKS:
         return mlebench.compute_score
     else:
         raise NotImplementedError
@@ -80,7 +89,7 @@ def compute_single_reward(
             return multiply.compute_score
         elif "countdown" in source:
             return countdown.compute_score
-        elif "mlebench" in source:
+        elif data_source in ALL_TASKS:
             return mlebench.compute_score
         else:
             raise NotImplementedError
@@ -207,6 +216,12 @@ class RewardManager():
                 print(f"Warning: compute_single_reward timed out after {self.timeout} seconds.")
                 # Optional: ray.cancel(ref, force=True)
                 # Default result if timed out:
+                results.append((i, (0.0, {})))
+            except ray.exceptions.RayTaskError as e:
+                print(f"Warning: Worker crashed or task failed with error: {e} for index {i}.")
+                results.append((i, (0.0, {})))
+            except Exception as e:
+                print(f"Warning: Unknown error: {e} for index {i}.")
                 results.append((i, (0.0, {})))
         for i, (score, _) in results:
             # For simplicity, put the entire score at the last token index

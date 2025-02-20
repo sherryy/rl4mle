@@ -76,7 +76,7 @@ class Interpreter:
         Returns:
             ExecutionResult: Object containing stdout/stderr, exec time, exception info, etc.
         """
-        os.environ["CUDA_VISIBLE_DEVICES"] = ','.join([str(i) for i in range(4,16)])
+        os.environ["CUDA_VISIBLE_DEVICES"] = ','.join([str(i) for i in range(8,16)])
 
         logger.info(f"Running code in-process (reset_session={reset_session}).")
 

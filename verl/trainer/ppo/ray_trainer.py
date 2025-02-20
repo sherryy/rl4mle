@@ -37,6 +37,24 @@ from verl.utils.seqlen_balancing import get_seqlen_balanced_partitions, log_seql
 
 WorkerType = Type[Worker]
 
+VAL_TASKS = ['random-acts-of-pizza',
+             'tweet-sentiment-extraction',
+             'spooky-author-identification',
+             'learning-agency-lab-automated-essay-scoring-2',
+             'leaf-classification',
+             'aerial-cactus-identification',
+             'detecting-insults-in-social-commentary',
+             'the-icml-2013-whale-challenge-right-whale-redux',
+             'spaceship-titanic']
+
+TRAIN_TASKS = ['tweet-sentiment-extraction',
+               'spooky-author-identification',
+               'learning-agency-lab-automated-essay-scoring-2',
+               'leaf-classification',
+               'aerial-cactus-identification',
+               'detecting-insults-in-social-commentary',
+               'the-icml-2013-whale-challenge-right-whale-redux']
+
 
 class Role(Enum):
     """
@@ -343,7 +361,9 @@ class RayPPOTrainer(object):
         from torch.utils.data import DataLoader
         # TODO: we have to make sure the batch size is divisible by the dp size
         from verl.utils.dataset.rl_dataset import RLHFDataset, collate_fn
-        self.train_dataset = RLHFDataset(parquet_files=self.config.data.train_files,
+        self.train_dataset = RLHFDataset(
+            #parquet_files=self.config.data.train_files,
+            parquet_files=[f"{task}/train.parquet" for task in TRAIN_TASKS],
                                          tokenizer=self.tokenizer,
                                          prompt_key=self.config.data.prompt_key,
                                          max_prompt_length=self.config.data.max_prompt_length,
@@ -356,7 +376,9 @@ class RayPPOTrainer(object):
                                            drop_last=True,
                                            collate_fn=collate_fn)
 
-        self.val_dataset = RLHFDataset(parquet_files=self.config.data.val_files,
+        self.val_dataset = RLHFDataset(
+            #parquet_files=self.config.data.val_files,
+            parquet_files=[f"{task}/test.parquet" for task in VAL_TASKS],
                                        tokenizer=self.tokenizer,
                                        prompt_key=self.config.data.prompt_key,
                                        max_prompt_length=self.config.data.max_prompt_length,

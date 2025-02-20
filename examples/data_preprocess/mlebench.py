@@ -75,14 +75,14 @@ if __name__ == '__main__':
     parser.add_argument('--max_target', type=int, default=1000)
     parser.add_argument('--min_number', type=int, default=1)
     parser.add_argument('--max_number', type=int, default=100)
-    parser.add_argument('--train_size', type=int, default=327680)
+    parser.add_argument('--train_size', type=int, default=32768)
     parser.add_argument('--test_size', type=int, default=128)
     parser.add_argument('--template_type', type=str, default='base')
     parser.add_argument('--competition_id', type=str, default='spaceship-titanic')
 
     args = parser.parse_args()
 
-    data_source = 'mlebench'
+    data_source = args.competition_id
     TRAIN_SIZE = args.train_size
     TEST_SIZE = args.test_size
 
