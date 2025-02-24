@@ -3,12 +3,12 @@ You are given a machine learning task. You must solve the task by training a mod
 <|im_start|>user
 First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
 
-- Datasets train.csv and test.csv are available in `/home/sherryy/.cache/mle-bench/data/tabular-playground-series-may-2022/prepared/public/`.
-- You MUST produce a submission file at `/home/sherryy/tmp/workspace/submission.csv` by running your model on the test split.
+- Datasets train.csv and test.csv are available in `/gcs/xcloud-shared/sherryy/mle-bench/data/tabular-playground-series-may-2022/prepared/public/`.
+- You MUST produce a submission file at `./submission.csv` by running your model on the test split.
 - Your task is to predict the probability of the binary `target` variable representing machine state (0 or 1).
 - Submissions are evaluated on the ROC curve between the predicted probability and the observed target.
 - You can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
-- submission.csv should have the following format:
+- For each id in the test set, you must predict a probability for the target variable. submission.csv should have the following format:
 ```
 id,target
 900000,0.65
@@ -16,7 +16,7 @@ id,target
 etc.
 ```
 - Data snippet:
--> /home/sherryy/.cache/mle-bench/data/tabular-playground-series-may-2022/prepared/public/train.csv has 800000 rows and 33 columns.
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/tabular-playground-series-may-2022/prepared/public/train.csv has 800000 rows and 33 columns.
 f_00 (float64) has range: -4.60 - 4.75
 f_07 (int64) has range: 0.00 - 15.00
 f_27 (object) has 670919 unique values. Some example values: ['ADBBBACQBC', 'BBBBBBDKBC']

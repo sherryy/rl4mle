@@ -3,9 +3,9 @@ You are given a machine learning task. You must solve the task by training a mod
 <|im_start|>user
 First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
 
-- Datasets train.csv and test.csv are available in `/home/sherryy/.cache/mle-bench/data/learning-agency-lab-automated-essay-scoring-2/prepared/public/`.
+- Datasets train.csv and test.csv are available in `/gcs/xcloud-shared/sherryy/mle-bench/data/learning-agency-lab-automated-essay-scoring-2/prepared/public/`.
 - You MUST produce a submission file at `./submission.csv` by running your model on the test split.
-- Your task is to predict essay scores (1-6) based on text, evaluated by quadratic weighted kappa.
+- Your task is to predict essay scores (1-6) based on text, evaluated by quadratic weighted kappa, which measures the agreement between two outcomes. This metric typically varies from 0 (random agreement) to 1 (complete agreement). In the event that there is less agreement than expected by chance, the metric may go below 0. 
 - You can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
 - submission.csv should have the following format:
 ```
@@ -15,7 +15,9 @@ essay_id,score
 etc.
 ```
 - Data snippet:
--> /home/sherryy/.cache/mle-bench/data/learning-agency-lab-automated-essay-scoring-2/prepared/public/train.csv has 15576 rows and 3 columns.
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/learning-agency-lab-automated-essay-scoring-2/prepared/public/train.csv has 15576 rows and 3 columns.
 essay_id (object), full_text (object), score (int64) ranges 1-6.
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/learning-agency-lab-automated-essay-scoring-2/prepared/public/test.csv has has 2 columns.
+essay_id (object), full_text (object).
 <|im_end|>
 <|im_start|>assistant

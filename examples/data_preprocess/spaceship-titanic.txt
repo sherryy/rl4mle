@@ -3,7 +3,7 @@ You are given a machine learning task. You must solve the task by training a mod
 <|im_start|>user
 First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```). Note:
 
-- Datasets train.csv and test.csv are available in `/home/sherryy/.cache/mle-bench/data/spaceship-titanic/prepared/public/`.
+- Datasets train.csv and test.csv are available in `/gcs/xcloud-shared/sherryy/mle-bench/data/spaceship-titanic/prepared/public/`.
 - You MUST produce a submission file at `./submission.csv` by running your model on the test split.
 - Achieve the best classification accuracy on the test split.
 - Your can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
@@ -17,7 +17,7 @@ etc.
 ```
 
 Train and test data snippet:
--> /home/sherryy/.cache/mle-bench/data/spaceship-titanic/prepared/public/train.csv has 7823 rows and 14 columns.
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/spaceship-titanic/prepared/public/train.csv has 7823 rows and 14 columns.
 Age (float64) has range: 0.00 - 79.00
 Cabin (object) has 5992 unique values. Some example values: ['B/201/P', 'B/11/S', 'F/1194/P', 'F/1411/P']
 CryoSleep (object) has 2 unique values: [True, False, nan]

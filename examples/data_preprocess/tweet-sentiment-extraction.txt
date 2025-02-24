@@ -3,12 +3,12 @@ You are given a machine learning task. You must solve the task by training a mod
 <|im_start|>user
 First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
 
-- Datasets train.csv and test.csv are available in `/home/sherryy/.cache/mle-bench/data/tweet-sentiment-extraction/prepared/public/`.
+- Datasets train.csv and test.csv are available in `/gcs/xcloud-shared/sherryy/mle-bench/data/tweet-sentiment-extraction/prepared/public/`.
 - You MUST produce a submission file at `./submission.csv` by running your model on the test split.
 - Your task is to predict the word or phrase from each tweet that supports its sentiment.
-- Submissions are evaluated on the word-level Jaccard score between predicted and ground truth text.
+- Submissions are evaluated on the word-level Jaccard score between predicted and ground truth text. A Python implementation based on the links above, and matched with the output of the C# implementation on the back end, is provided below. ``` def jaccard(str1, str2): a = set(str1.lower().split()) b = set(str2.lower().split()) c = a.intersection(b) return float(len(c)) / (len(a) + len(b) - len(c)) ```
 - You can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
-- submission.csv should have the following format:
+- For each ID in the test set, you must predict the string that best supports the sentiment for the tweet in question. Note that the selected text _needs_ to be **quoted** and **complete** (include punctuation, etc. - the above code splits ONLY on whitespace) to work correctly. The file should contain a header and have the following format: textID,selected_text 2,"very good" 5,"I don't care" 6,"bad" 8,"it was, yes" etc. submission.csv should have the following format:
 ```
 textID,selected_text
 2,"very good"
@@ -16,9 +16,14 @@ textID,selected_text
 etc.
 ```
 - Data snippet:
--> /home/sherryy/.cache/mle-bench/data/tweet-sentiment-extraction/prepared/public/train.csv has 24732 rows and 4 columns.
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/tweet-sentiment-extraction/prepared/public/train.csv has 24732 rows and 4 columns.
 selected_text (object) has 20309 unique values. Some example values: ['good', 'love', 'Happy', 'miss']
 sentiment (object) has 3 unique values: ['negative', 'positive', 'neutral']
 text (object) has 24731 unique values. Some example values: ['And i ain`t happy go lucky, its just today...', 'eating breakfast  getting ready to go to school ;(']
 textID (object) has 24732 unique values. Some example values: ['8a30be8cc7', '8d4ad58b45']
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/tweet-sentiment-extraction/prepared/public/test.csv has 3 columns.
+textID,text,sentiment
+80a1e6bc32,I just saw a shooting star... I made my wish,positive
+...
 <|im_end|>
+<|im_start|>assistant

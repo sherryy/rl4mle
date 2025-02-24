@@ -3,10 +3,10 @@ You are given a machine learning task. You must solve the task by training a mod
 <|im_start|>user
 First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
 
-- Datasets train.csv and test.csv are available in `/home/sherryy/.cache/mle-bench/data/ventilator-pressure-prediction/prepared/public/`.
-- You MUST produce a submission file at `/home/sherryy/tmp/workspace/submission.csv` by running your model on the test split.
+- Datasets train.csv and test.csv are available in `/gcs/xcloud-shared/sherryy/mle-bench/data/ventilator-pressure-prediction/prepared/public/`.
+- You MUST produce a submission file at `./submission.csv` by running your model on the test split.
 - Your task is to predict airway pressure in a respiratory circuit given control inputs and lung attributes.
-- Submissions are evaluated on mean absolute error between predicted and actual pressures during the inspiratory phase.
+- Submissions are evaluated on mean absolute error between predicted and actual pressures during the inspiratory phase of each breath. The expiratory phase is not scored. The score is given by |X - Y| where X is the vector of predicted pressure and Y is the vector of actual pressures across all breaths in the test set.
 - You can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
 - submission.csv should have the following format:
 ```
@@ -16,7 +16,12 @@ id,pressure
 etc.
 ```
 - Data snippet:
--> /home/sherryy/.cache/mle-bench/data/ventilator-pressure-prediction/prepared/public/train.csv has 5432400 rows and 8 columns.
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/ventilator-pressure-prediction/prepared/public/train.csv has 5432400 rows and 8 columns:
+id,breath_id,R,C,time_step,u_in,u_out,pressure
+1,85053,5,10,0,4.174419212,0,6.118700287
+2,85053,5,10,0.03381204605,7.050149003,0,5.907793851
+...
+Specifically:
 C (int64) has 3 unique values: [10, 20, 50]
 R (int64) has 3 unique values: [5, 50, 20]
 breath_id (int64) has range: 1.00 - 125749.00
@@ -25,4 +30,10 @@ pressure (float64) has range: -1.90 - 64.82
 time_step (float64) has range: 0.00 - 2.94
 u_in (float64) has range: 0.00 - 100.00
 u_out (int64) has 2 unique values: [0, 1]
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/ventilator-pressure-prediction/prepared/public/test.csv has 7 columns:
+id,breath_id,R,C,time_step,u_in,u_out
+1,44398,50,20,0,0.1338052724,0
+2,44398,50,20,0.03195524216,2.411108364,0
+...
 <|im_end|>
+<|im_start|>assistant

@@ -3,10 +3,10 @@ You are given a machine learning task. You must solve the task by training a mod
 <|im_start|>user
 First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
 
-- Datasets train.csv and test.csv are available in `/home/sherryy/.cache/mle-bench/data/leaf-classification/prepared/public/`.
+- Datasets train.csv, test.csv, and images/ are available in `/gcs/xcloud-shared/sherryy/mle-bench/data/leaf-classification/prepared/public/`.
 - You MUST produce a submission file at `./submission.csv` by running your model on the test split.
 - Your task is to predict probabilities for 99 plant species using pre-extracted features.
-- Submissions are evaluated using multi-class logarithmic loss.
+- Submissions are evaluated using multi-class logarithmic loss. Each image has been labeled with one true species. For each image, you must submit a set of predicted probabilities (one for every species). The submitted probabilities for a given device are not required to sum to one because they are rescaled prior to being scored (each row is divided by the row sum), but they need to be in the range of [0, 1]. In order to avoid the extremes of the log function, predicted probabilities are replaced with \\(max(min(p,1-10^{-15}),10^{-15})\\).
 - You can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
 - submission.csv should have the following format:
 ```
@@ -16,8 +16,9 @@ id,Acer_Capillipes,Acer_Circinatum,Acer_Mono,...
 etc.
 ```
 - Data snippet:
--> /home/sherryy/.cache/mle-bench/data/leaf-classification/prepared/public/train.csv has 891 rows and 194 columns.
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/leaf-classification/prepared/public/train.csv has 891 rows and 194 columns.
 id (int), species (object), margin1 to margin64 (float64), shape1 to shape64 (float64), texture1 to texture64 (float64)
--> /home/sherryy/.cache/mle-bench/data/leaf-classification/prepared/public/test.csv has 99 rows and 193 columns.
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/leaf-classification/prepared/public/test.csv has 99 rows and 193 columns.
 id (int), margin1 to margin64 (float64), shape1 to shape64 (float64), texture1 to texture64 (float64)
 <|im_end|>
+<|im_start|>assistant
