@@ -1,0 +1,26 @@
+<|im_start|>system
+You are given a machine learning task. You must solve the task by training a model and running the model on the test set to produce a submission file.<|im_end|>
+<|im_start|>user
+First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
+
+- Datasets train.csv and test.csv are available in `/home/sherryy/.cache/mle-bench/data/us-patent-phrase-to-phrase-matching/prepared/public/`.
+- You MUST produce a submission file at `/home/sherryy/tmp/workspace/submission.csv` by running your model on the test split.
+- Your task is to predict similarity scores (0-1) between pairs of phrases based on their context.
+- Submissions are evaluated on the Pearson correlation coefficient between predicted and actual scores.
+- You can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
+- submission.csv should have the following format:
+```
+id,score
+4112d61851461f60,0
+09e418c93a776564,0.25
+etc.
+```
+- Data snippet:
+-> /home/sherryy/.cache/mle-bench/data/us-patent-phrase-to-phrase-matching/prepared/public/train.csv has 32825 rows and 5 columns.
+anchor (object) has 733 unique values. Some example values: ['component composite coating', 'sheet supply roller']
+context (object) has 106 unique values. Some example values: ['H04', 'H01', 'G01', 'A61']
+id (object) has 32825 unique values. Some example values: ['4e3ae02c7c3dc246', '378b8322a01b88db']
+score (float64) has 5 unique values: [0.5, 0.25, 0.75, 0.0, 1.0]
+target (object) has 26850 unique values. Some example values: ['composition', 'motor']
+<|im_end|>
+<|im_start|>assistant

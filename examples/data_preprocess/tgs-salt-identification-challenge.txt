@@ -1,0 +1,22 @@
+<|im_start|>system
+You are given a machine learning task. You must solve the task by training a model and running the model on the test set to produce a submission file.<|im_end|>
+<|im_start|>user
+First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
+
+- Datasets train.csv, depths.csv, and test/ are available in `/home/sherryy/.cache/mle-bench/data/tgs-salt-identification-challenge/prepared/public/`.
+- You MUST produce a submission file at `/home/sherryy/tmp/workspace/submission.csv` by running your model on the test split.
+- Your task is to segment salt regions in seismic images, evaluated on mean average precision at IoU thresholds from 0.5 to 0.95.
+- You can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
+- submission.csv should have the following format:
+```
+id,rle_mask
+3e06571ef3,1 3 10 5
+a51b08d882,1 1
+etc.
+```
+- Data snippet:
+-> /home/sherryy/.cache/mle-bench/data/tgs-salt-identification-challenge/prepared/public/train.csv has 3000 rows and 2 columns.
+id (object) has 3000 unique values. Some example values: ['fff987cdb3', '000e218f21', '00441f1cf2']
+rle_mask (object) has 1811 unique values. Some example values: ['1617 8585', '9293 909', '3132 7070']
+-> Test folder contains 1000 images (e.g., 003c477d7c.png, 0108518d1e.png).
+<|im_end|>

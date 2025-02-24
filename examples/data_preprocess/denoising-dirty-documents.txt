@@ -1,0 +1,19 @@
+<|im_start|>system
+You are given a machine learning task. You must solve the task by training a model and running the model on the test set to produce a submission file.<|im_end|>
+<|im_start|>user
+First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
+
+- Datasets are available in `train/`, `train_cleaned/`, and `test/` are all in `/home/sherryy/.cache/mle-bench/data/denoising-dirty-documents/prepared/public/`.
+- You MUST produce a submission file at `./submission.csv` by running your model on the test images.
+- Your task is to denoise the images in the test set to achieve the lowest root mean squared error (RMSE) on the pixel intensities.
+- You can use pre-installed packages such as: `torch`, `pandas`, `scikit-learn`, `numpy`, `torchvision`, etc.
+- submission.csv should have the following format:
+```
+id,value
+110_1_1,0.5
+110_1_2,0.6
+etc.
+```
+- The train directory contains noisy images, train_cleaned contains corresponding clean images, and test contains noisy images to be denoised. Each image is a grayscale PNG file.
+<|im_end|>
+<|im_start|>assistant

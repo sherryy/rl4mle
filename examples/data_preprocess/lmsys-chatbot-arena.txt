@@ -1,0 +1,28 @@
+<|im_start|>system
+You are given a machine learning task. You must solve the task by training a model and running the model on the test set to produce a submission file.<|im_end|>
+<|im_start|>user
+First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
+
+- Datasets train.csv and test.csv are available in `/home/sherryy/.cache/mle-bench/data/lmsys-chatbot-arena/prepared/public/`.
+- You MUST produce a submission file at `/home/sherryy/tmp/workspace/submission.csv` by running your model on the test split.
+- Your task is to predict the probability of user preference for model_a, model_b, or tie in chatbot responses.
+- Submissions are evaluated on log loss between predicted probabilities and ground truth.
+- You can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
+- submission.csv should have the following format:
+```
+id,winner_model_a,winner_model_b,winner_tie
+136060,0.33,0.33,0.33
+211333,0.33,0.33,0.33
+et
+c
+```
+- Data snippet:
+-> /home/sherryy/.cache/mle-bench/data/lmsys-chatbot-arena/prepared/public/train.csv has 51729 rows and 9 columns.
+id (int64) has range: 30192 - 4294947231
+prompt (object) has 46865 unique values. Some examples: ['["hi there"]', '["tell me a joke"]']
+response_a (object) has 50939 unique values. Some examples: ['["Hello!"]', '["Sorry, I can’t assist."]']
+response_b (object) has 50970 unique values. Some examples: ['["Hi! How can I help?"]', '["."]']
+winner_model_a (int64) has 2 unique values: [0, 1]
+winner_model_b (int64) has 2 unique values: [0, 1]
+winner_tie (int64) has 2 unique values: [0, 1]
+<|im_end|>

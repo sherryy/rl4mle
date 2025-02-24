@@ -1,0 +1,28 @@
+<|im_start|>system
+You are given a machine learning task. You must solve the task by training a model and running the model on the test set to produce a submission file.<|im_end|>
+<|im_start|>user
+First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
+
+- Datasets train.csv and test.csv are available in `/home/sherryy/.cache/mle-bench/data/ventilator-pressure-prediction/prepared/public/`.
+- You MUST produce a submission file at `/home/sherryy/tmp/workspace/submission.csv` by running your model on the test split.
+- Your task is to predict airway pressure in a respiratory circuit given control inputs and lung attributes.
+- Submissions are evaluated on mean absolute error between predicted and actual pressures during the inspiratory phase.
+- You can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
+- submission.csv should have the following format:
+```
+id,pressure
+1,20
+2,23
+etc.
+```
+- Data snippet:
+-> /home/sherryy/.cache/mle-bench/data/ventilator-pressure-prediction/prepared/public/train.csv has 5432400 rows and 8 columns.
+C (int64) has 3 unique values: [10, 20, 50]
+R (int64) has 3 unique values: [5, 50, 20]
+breath_id (int64) has range: 1.00 - 125749.00
+id (int64) has range: 1.00 - 5432400.00
+pressure (float64) has range: -1.90 - 64.82
+time_step (float64) has range: 0.00 - 2.94
+u_in (float64) has range: 0.00 - 100.00
+u_out (int64) has 2 unique values: [0, 1]
+<|im_end|>

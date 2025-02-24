@@ -1,0 +1,22 @@
+<|im_start|>system
+You are given a machine learning task. You must solve the task by training a model and running the model on the test set to produce a submission file.<|im_end|>
+<|im_start|>user
+First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
+
+- Datasets labels.csv, sample_submission.csv, and image folders train/ and test/ are available in `/home/sherryy/.cache/mle-bench/data/dog-breed-identification/prepared/public/`.
+- You MUST produce a submission file at `/home/sherryy/tmp/workspace/submission.csv` by running your model on the test split.
+- Your task is to predict the probability of each of the 120 dog breeds for each image in the test set.
+- Submissions are evaluated on Multi Class Log Loss.
+- You can use pre-installed packages such as: `pandas`, `numpy`, `torch`, `torchvision`, `timm`, `scikit-learn`, `xgboost`, `lightGBM`.
+- submission.csv should have the following format:
+```
+d,affenpinscher,afghan_hound,...,yorkshire_terrier
+000621fb3cbb32d8935728e48679680e,0.0083,0.0,...,0.0083
+etc.
+```
+- Data snippet:
+  - labels.csv has 9199 rows with columns: id, breed (120 unique breeds)
+  - sample_submission.csv has 1023 rows with columns: id, and 120 breed probabilities
+  - Train images: 9199 JPEG files in train/
+  - Test images: 1023 JPEG files in test/
+<|im_end|>

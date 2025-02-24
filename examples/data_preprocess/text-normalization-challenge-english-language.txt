@@ -1,0 +1,23 @@
+<|im_start|>system
+You are given a machine learning task. You must solve the task by training a model and running the model on the test set to produce a submission file.<|im_end|>
+<|im_start|>user
+First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
+
+- Datasets en_train.csv.zip and en_test_2.csv.zip are available in `/home/sherryy/.cache/mle-bench/data/text-normalization-challenge-english-language/prepared/public/`.
+- You MUST produce a submission file at `/home/sherryy/tmp/workspace/submission.csv` by running your model on the test split.
+- Your task is to predict the normalized text for each token, evaluated on sequence accuracy (exact match percentage).
+- You can use pre-installed packages such as: `pandas`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `lightGBM`.
+- submission.csv should have the following format:
+```
+id,after
+0_0,"the"
+0_1,"quick"
+etc.
+```
+- Data snippet:
+-> /home/sherryy/.cache/mle-bench/data/text-normalization-challenge-english-language/prepared/public/en_train.csv.zip has 8924976 rows and 5 columns.
+after (object) has 441470 unique values. Some example values: ['.', ',', 'the', '"']
+before (object) has 455220 unique values. Some example values: ['.', ',', 'the', '"']
+class (object) has 16 unique values. Some example values: ['PLAIN', 'PUNCT', 'DATE', 'LETTERS']
+sentence_id (int64) has range: 0.00 - 673258.00
+token_id (int64) has range: 0.00 - 255.00

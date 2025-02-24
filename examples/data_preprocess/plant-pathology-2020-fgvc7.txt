@@ -1,0 +1,25 @@
+<|im_start|>system
+You are given a machine learning task. You must solve the task by training a model and running the model on the test set to produce a submission file.<|im_end|>
+<|im_start|>user
+First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
+
+- Datasets train.csv, test.csv, and images/ are available in `/home/sherryy/.cache/mle-bench/data/plant-pathology-2020-fgvc7/prepared/public/`.
+- You MUST produce a submission file at `/home/sherryy/tmp/workspace/submission.csv` by running your model on the test split.
+- Your task is to predict probabilities for healthy, multiple_diseases, rust, and scab classes for each image.
+- Submissions are evaluated on mean column-wise ROC AUC across the four target columns.
+- You can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
+- submission.csv should have the following format:
+```
+image_id,healthy,multiple_diseases,rust,scab
+test_0,0.25,0.25,0.25,0.25
+test_1,0.25,0.25,0.25,0.25
+etc.
+```
+- Data snippet:
+-> /home/sherryy/.cache/mle-bench/data/plant-pathology-2020-fgvc7/prepared/public/train.csv has 1638 rows and 5 columns.
+healthy (int64) has 2 unique values: [0, 1]
+image_id (object) has 1638 unique values. Some example values: ['Train_1637', 'Train_0', 'Train_1', 'Train_2']
+multiple_diseases (int64) has 2 unique values: [0, 1]
+rust (int64) has 2 unique values: [1, 0]
+scab (int64) has 2 unique values: [0, 1]
+<|im_end|>
