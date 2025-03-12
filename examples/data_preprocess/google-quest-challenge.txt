@@ -3,8 +3,8 @@ You are given a machine learning task. You must solve the task by training a mod
 <|im_start|>user
 First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
 
-- Datasets train.csv and test.csv are available in `/home/sherryy/.cache/mle-bench/data/google-quest-challenge/prepared/public/`.
-- You MUST produce a submission file at `/home/sherryy/tmp/workspace/submission.csv` by running your model on the test split.
+- Datasets train.csv and test.csv are available in `/gcs/xcloud-shared/sherryy/mle-bench/data/google-quest-challenge/prepared/public/`.
+- You MUST produce a submission file at `./submission.csv` by running your model on the test split.
 - Your task is to predict 30 subjective label probabilities for each question-answer pair.
 - Submissions are evaluated on the mean column-wise Spearman’s correlation coefficient.
 - You can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
@@ -16,5 +16,7 @@ qa_id,question_asker_intent_understanding,...,answer_well_written
 etc.
 ```
 - Data snippet:
--> /home/sherryy/.cache/mle-bench/data/google-quest-challenge/prepared/public/train.csv has 5471 rows and 41 columns.
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/google-quest-challenge/prepared/public/train.csv has 5471 rows and 41 columns.
 Columns include: qa_id, question_title, question_body, answer, question_asker_intent_understanding (float64, 0-1), ..., answer_well_written (float64, 0-1).
+<|im_end|>
+<|im_start|>assistant

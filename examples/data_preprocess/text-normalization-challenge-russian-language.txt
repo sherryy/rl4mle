@@ -3,12 +3,12 @@ You are given a machine learning task. You must solve the task by training a mod
 <|im_start|>user
 First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
 
-- Datasets ru_train.csv.zip and ru_test_2.csv.zip are available in `/home/sherryy/.cache/mle-bench/data/text-normalization-challenge-russian-language/prepared/public/`.
-- You MUST produce a submission file at `/home/sherryy/tmp/workspace/submission.csv` by running your model on the test split.
+- Datasets ru_train.csv.zip and ru_test_2.csv.zip are available in `/gcs/xcloud-shared/sherryy/mle-bench/data/text-normalization-challenge-russian-language/prepared/public/`.
+- You MUST produce a submission file at `./submission.csv` by running your model on the test split.
 - Your task is to predict the normalized text for each token in the test set.
 - Submissions are evaluated on prediction accuracy (percent of correct tokens).
 - You can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
-- submission.csv should have the following format:
+- ./submission.csv should have the following format:
 ```
 id,after
 0_0,"Производится"
@@ -16,7 +16,7 @@ id,after
 etc.
 ```
 - Data snippet:
--> /home/sherryy/.cache/mle-bench/data/text-normalization-challenge-russian-language/prepared/public/ru_train.csv.zip has 9515325 rows and 5 columns.
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/text-normalization-challenge-russian-language/prepared/public/ru_train.csv.zip has 9515325 rows and 5 columns.
 after (object) has 729633 unique values. Some example values: ['.', ',', 'в', 'и']
 before (object) has 751569 unique values. Some example values: ['.', ',', 'в', '—']
 class (object) has 15 unique values. Some example values: ['PLAIN', 'PUNCT', 'CARDINAL', 'LETTERS']

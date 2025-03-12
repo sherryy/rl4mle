@@ -3,8 +3,8 @@ You are given a machine learning task. You must solve the task by training a mod
 <|im_start|>user
 First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
 
-- Datasets train/ and test/ are available in `/home/sherryy/.cache/mle-bench/data/dogs-vs-cats-redux-kernels-edition/prepared/public/`.
-- You MUST produce a submission file at `/home/sherryy/tmp/workspace/submission.csv` by running your model on the test split.
+- Datasets train/ and test/ are available in `/gcs/xcloud-shared/sherryy/mle-bench/data/dogs-vs-cats-redux-kernels-edition/prepared/public/`.
+- You MUST produce a submission file at `./submission.csv` by running your model on the test split.
 - Your task is to predict the probability that an image is a dog (1 = dog, 0 = cat).
 - Submissions are evaluated on log loss; lower is better.
 - You can use pre-installed packages such as: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
@@ -16,6 +16,7 @@ id,label
 etc.
 ```
 - Data snippet:
--> /home/sherryy/.cache/mle-bench/data/dogs-vs-cats-redux-kernels-edition/prepared/public/train/ contains 25,000 images (e.g., cat.0.jpg, dog.1.jpg).
--> /home/sherryy/.cache/mle-bench/data/dogs-vs-cats-redux-kernels-edition/prepared/public/test/ contains 12,500 images (e.g., 1.jpg, 2.jpg).
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/dogs-vs-cats-redux-kernels-edition/prepared/public/train/ contains 25,000 images (e.g., cat.0.jpg, dog.1.jpg).
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/dogs-vs-cats-redux-kernels-edition/prepared/public/test/ contains 12,500 images (e.g., 1.jpg, 2.jpg).
 <|im_end|>
+<|im_start|>assistant

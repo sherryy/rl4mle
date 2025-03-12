@@ -3,13 +3,12 @@ You are given a machine learning task. You must solve the task by training a mod
 <|im_start|>user
 First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
 
-- The training data is in `/home/sherryy/.cache/mle-bench/data/predict-volcanic-eruptions-ingv-oe/prepared/public/train.csv` (segment IDs and time to eruption) and `/home/sherryy/.cache/mle-bench/data/predict-volcanic-eruptions-ingv-oe/prepared/public/train/` (sensor data CSV files).
-- The test data is in `/home/sherryy/.cache/mle-bench/data/predict-volcanic-eruptions-ingv-oe/prepared/public/test/` (sensor data CSV files).
+- Datasets train.csv, test.csv, train/, and test/ are available in `/gcs/xcloud-shared/sherryy/mle-bench/data/predict-volcanic-eruptions-ingv-oe/prepared/public/`. train.csv: Contains segment_id and time_to_eruption for training segments (e.g., 1638 rows). train/ and test/ directories contain CSV files named by segment_id, each with 60001 rows × 10 sensors (may contain nulls).
 - You MUST produce a submission file at `./submission.csv` with predictions for the test segments.
 - Your task is to predict the time until the next volcanic eruption for each test segment.
 - Submissions are evaluated on the mean absolute error (MAE).
 - Available packages: `statsmodels`, `pandas`, `timm`, `bayesian-optimization`, `scikit-learn`, `xgboost`, `numpy`, `torch`, `torchvision`, `lightGBM`, `torch-geometric`.
-- submission.csv format:
+- submission.csv should have the following format:
 ```
 segment_id,time_to_eruption
 1,1
@@ -17,6 +16,18 @@ segment_id,time_to_eruption
 etc.
 ```
 - Data snippet:
-Train segments: 3987
-Each segment CSV has 60001 rows × 10 sensors
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/predict-volcanic-eruptions-ingv-oe/prepared/public/train.cs
+segment_id,time_to_eruption
+1410693848,20109998
+987159268,7202883
+...
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/predict-volcanic-eruptions-ingv-oe/prepared/public/train/
+1410693848.csv
+987159268.csv
+...
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/predict-volcanic-eruptions-ingv-oe/prepared/public/test/
+984224331.csv
+982293994.csv
+...
 <|im_end|>
+<|im_start|>assistant

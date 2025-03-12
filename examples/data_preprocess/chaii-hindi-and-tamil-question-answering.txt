@@ -3,8 +3,8 @@ You are given a machine learning task. You must solve the task by training a mod
 <|im_start|>user
 First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
 
-- Datasets train.csv and test.csv are available in `/home/sherryy/.cache/mle-bench/data/chaii-hindi-and-tamil-question-answering/prepared/public/`.
-- You MUST produce a submission file at `/home/sherryy/tmp/workspace/submission.csv` by running your model on the test split.
+- Datasets train.csv and test.csv are available in `/gcs/xcloud-shared/sherryy/mle-bench/data/chaii-hindi-and-tamil-question-answering/prepared/public/`.
+- You MUST produce a submission file at `./submission.csv` by running your model on the test split.
 - Your task is to predict answers to questions in Hindi and Tamil based on given contexts.
 - Submissions are evaluated on the word-level Jaccard score.
 - You can use pre-installed packages such as: `statsmodels`, `pandas`, `bayesian-optimization`, `scikit-learn`, `lightGBM`, `torchvision`, `torch-geometric`, `numpy`, `xgboost`, `timm`, `torch`.
@@ -16,6 +16,7 @@ id,PredictionString
 etc.
 ```
 - Data snippet:
--> /home/sherryy/.cache/mle-bench/data/chaii-hindi-and-tamil-question-answering/prepared/public/train.csv has 1002 rows and 6 columns.
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/chaii-hindi-and-tamil-question-answering/prepared/public/train.csv has 1002 rows and 6 columns.
 Columns: id (str), context (str), question (str), answer_text (str), answer_start (int), language (str: 'hindi' or 'tamil')
 <|im_end|>
+<|im_start|>assistant

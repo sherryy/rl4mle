@@ -3,7 +3,7 @@ You are given a machine learning task. You must solve the task by training a mod
 <|im_start|>user
 First outline your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution. Note:
 
-- Datasets train.csv, train/, and test/ images are available in `/home/sherryy/.cache/mle-bench/data/aerial-cactus-identification/prepared/public/`.
+- Datasets train.csv, train.zip, and test.zip are available in `/gcs/xcloud-shared/sherryy/mle-bench/data/aerial-cactus-identification/prepared/public/`.
 - You MUST produce a submission file at `./submission.csv` by running your model on the test split.
 - Your task is to predict the probability of a cactus in aerial images.
 - Submissions are evaluated on the ROC curve between the predicted probability and the observed target.
@@ -16,8 +16,9 @@ id,has_cactus
 etc.
 ```
 - Data snippet:
--> /home/sherryy/.cache/mle-bench/data/aerial-cactus-identification/prepared/public/train.csv has 14175 rows and 2 columns.
+-> /gcs/xcloud-shared/sherryy/mle-bench/data/aerial-cactus-identification/prepared/public/train.csv has 14175 rows and 2 columns.
 has_cactus (int64) has 2 unique values: [1, 0]
 id (object) has 14175 unique values. Some example values: ['2654166bc65ed53655b41c70217a8cdc.jpg', '2de8f189f1dce439766637e75df0ee27.jpg']
 -> Test folder contains 3325 images (e.g., '000940378805c44108d287872b2f04ce.jpg').
 <|im_end|>
+<|im_start|>assistant
