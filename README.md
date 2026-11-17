@@ -1,113 +1,131 @@
-# TinyZero
-![image](cover.png)
+# Reinforcement Learning for Machine Learning Engineering Agents
 
-TinyZero is a reproduction of [DeepSeek R1 Zero](https://github.com/deepseek-ai/DeepSeek-R1) in countdown and multiplication tasks. We built upon [veRL](https://github.com/volcengine/verl).
+[Paper](https://arxiv.org/abs/2509.01684) · Sherry Yang, Joy He-Yueya, and Percy Liang (2025)
 
-Through RL, the 3B base LM develops self-verification and search abilities all on its own 
+This repository focuses on reinforcement learning for machine learning engineering (MLE): a language model proposes a plan and Python code, the code produces a competition submission, and an MLEBench grader supplies a reward for PPO training. The training infrastructure builds on [veRL](https://github.com/volcengine/verl) and [TinyZero](https://github.com/Jiayi-Pan/TinyZero).
 
-You can experience the Ahah moment yourself for < $30 
+## Scope of this checkout
 
-Twitter thread: https://x.com/jiayi_pirate/status/1882839370505621655
+The retained workflow includes MLEBench task prompts, Parquet prompt preparation, distributed PPO training, parallel reward evaluation with Ray, and submission grading.
 
-Full experiment log: https://wandb.ai/jiayipan/TinyZero
+The paper introduces duration-aware policy gradients, environment instrumentation with a separate static model, and multi-step self-improvement. **Those extensions are not implemented in this checkout.** The current reward adapter uses raw grader scores and coarse submission bonuses; it does not implement the paper's partial-credit rewards or reverse scores for tasks where lower is better. The launcher is a starting configuration for the available PPO workflow, not a complete reproduction of the paper's experiments.
 
-Paper's on it's way!
+## Installation and environment
 
-## Installation
+Use a Linux machine with NVIDIA GPUs and a CUDA environment compatible with the pinned vLLM version. Run repository commands from the repository root.
 
-```
-conda create -n zero python=3.9
-# install torch [or you can skip this step and let vllm to install the correct version for you]
-pip install torch==2.4.0 --index-url https://download.pytorch.org/whl/cu121
-# install vllm
-pip3 install vllm==0.6.3 # or you can install 0.5.4, 0.4.2 and 0.3.1
-pip3 install ray
+```bash
+conda create -n rl-mle python=3.11
+conda activate rl-mle
 
-# verl
-pip install -e .
-
-# flash attention 2
-pip3 install flash-attn --no-build-isolation
-# quality of life
-pip install wandb IPython matplotlib
+python -m pip install vllm==0.6.3
+python -m pip install flash-attn --no-build-isolation
+python -m pip install -r requirements.txt
+python -m pip install -e .
 ```
 
-## Countdown task
+Install [MLEBench](https://github.com/openai/mle-bench#setup) separately, including its Git LFS files, and make the `mlebench` command available to reward workers:
 
-**Data Preparation**
-```
-conda activate zero
-python ./examples/data_preprocess/countdown.py --local_dir {path_to_your_dataset}
-```
-
-### Run Training
-```
-conda activate zero
+```bash
+git clone https://github.com/openai/mle-bench.git ../mle-bench
+git -C ../mle-bench lfs pull
+python -m pip install -e ../mle-bench
 ```
 
-For the following code, if you see Out-of-vram, try add `critic.model.enable_gradient_checkpointing=True` to the script, and checkout the discussion [here](https://github.com/Jiayi-Pan/TinyZero/issues/5#issuecomment-2624161643)
+Follow MLEBench's instructions for Kaggle credentials and preparing each competition, for example:
 
-**Single GPU**
-
-
-Works for model <= 1.5B. For Qwen2.5-0.5B base, we know it fails to learn reasoning.
-
+```bash
+mlebench prepare -c random-acts-of-pizza
 ```
-export N_GPUS=1
-export BASE_MODEL={path_to_your_model}
-export DATA_DIR={path_to_your_dataset}
-export ROLLOUT_TP_SIZE=1
-export EXPERIMENT_NAME=countdown-qwen2.5-0.5b
+
+Competition data, model weights, and the packages needed by generated ML programs are external dependencies. Install the packages advertised in the selected task prompt in the execution environment. The launcher uses Weights & Biases by default; configure an account or override the logger as shown below.
+
+### Local paths and execution resources
+
+The reward execution integration retains assumptions from the original research environment. Configure these before launching training:
+
+- Update dataset paths in `examples/data_preprocess/<competition_id>.txt` to the prepared competition's `public/` directory. The bundled prompts contain original machine-specific paths. Keep the instruction to write `./submission.csv` and the existing chat-template delimiters.
+- Set `workspace_dir` consistently in `verl/trainer/main_ppo.py` and `verl/utils/reward_score/mlebench.py` to a dedicated writable directory. The training entry point clears that directory when it starts.
+- Adjust the GPU assignment in `verl/utils/reward_score/interpreter.py`. It currently sets `CUDA_VISIBLE_DEVICES` to GPUs `8` through `15` for generated ML programs, separately from the launcher's training GPU count.
+
+Generated programs execute inside Ray worker processes. The included interpreter provides neither a sandbox nor an enforced execution timeout. `data.timeout` limits how long the reward manager waits for a Ray result; it does not terminate the generated program.
+
+## Prepare RL prompts
+
+After updating the competition prompt's data paths, create the training and validation Parquet files:
+
+```bash
+export COMPETITION_ID=random-acts-of-pizza
+export DATA_DIR="$HOME/data/mlebench/$COMPETITION_ID"
+
+python examples/data_preprocess/mlebench.py \
+  --competition_id "$COMPETITION_ID" \
+  --local_dir "$DATA_DIR" \
+  --train_size 32768 \
+  --test_size 128
+```
+
+The preprocessor reads the matching `.txt` prompt next to the script and writes `train.parquet` and `test.parquet`. Each file repeats the task prompt with a distinct row index, so the policy can sample multiple solutions to the same competition. These are RL prompt splits; the actual competition training and test data come from MLEBench. The competition ID is stored in both `data_source` and `reward_model.ground_truth` for grading. An optional `--hdfs_dir` copies the generated files to HDFS.
+
+## Train with PPO
+
+With the execution environment configured and the prompt files prepared:
+
+```bash
+export N_GPUS=8
+export BASE_MODEL=Qwen/Qwen2.5-3B-Instruct
+export ROLLOUT_TP_SIZE=8
+export EXPERIMENT_NAME="$COMPETITION_ID-qwen2.5-3b-instruct"
 export VLLM_ATTENTION_BACKEND=XFORMERS
+export TIMEOUT=300
 
-bash ./scripts/train_tiny_zero.sh
+bash scripts/train_tiny_zero_mlebench.sh
 ```
 
-**3B+ model**
-In this case, the base model is able to develop sophisticated reasoning skills.
-```
-export N_GPUS=2
-export BASE_MODEL={path_to_your_model}
-export DATA_DIR={path_to_your_dataset}
-export ROLLOUT_TP_SIZE=2
-export EXPERIMENT_NAME=countdown-qwen2.5-3b
-export VLLM_ATTENTION_BACKEND=XFORMERS
+`BASE_MODEL` can also point to a local Hugging Face model directory. Match `N_GPUS` and `ROLLOUT_TP_SIZE` to the training resources available. `run.sh` wraps the same launcher with environment-variable defaults.
 
-bash ./scripts/train_tiny_zero.sh
+The launcher accepts additional Hydra overrides. For example, to log to the console:
+
+```bash
+bash scripts/train_tiny_zero_mlebench.sh 'trainer.logger=[console]'
 ```
 
-### Instruct Ablation
-We experiment with QWen-2.5-3B Instruct too.
-**Data Preparation**
-To follow chat template, we need to reprocess the data:
-```
-conda activate zero
-python examples/data_preprocess/countdown.py --template_type=qwen-instruct --local_dir={path_to_your_dataset}
-```
+Configuration is defined in [`verl/trainer/config/ppo_trainer.yaml`](verl/trainer/config/ppo_trainer.yaml), with experiment overrides in [`scripts/train_tiny_zero_mlebench.sh`](scripts/train_tiny_zero_mlebench.sh).
 
-**Training**
-```
-export N_GPUS=2
-export BASE_MODEL={path_to_your_model}
-export DATA_DIR={path_to_your_dataset}
-export ROLLOUT_TP_SIZE=2
-export EXPERIMENT_NAME=countdown-qwen2.5-3b-instruct
-export VLLM_ATTENTION_BACKEND=XFORMERS
+| Setting | Purpose |
+| --- | --- |
+| `data.train_files`, `data.val_files` | Prepared RL prompt files. |
+| `data.max_prompt_length`, `data.max_response_length` | Token limits; increase the prompt limit if a competition prompt exceeds it. |
+| `data.timeout` | Wait limit for each training reward result. |
+| `actor_rollout_ref.actor.optim.lr` | Policy learning rate. |
+| `actor_rollout_ref.rollout.tensor_model_parallel_size` | Tensor parallelism for generation. |
+| `trainer.save_freq`, `trainer.test_freq` | Checkpoint and validation intervals. |
 
-bash ./scripts/train_tiny_zero.sh
-```
+Checkpoints are saved under `checkpoints/rl-for-mle/<experiment_name>/` by default, and the launcher writes `mlebench_train.log`. Validation uses the same MLEBench reward adapter on the configured validation prompts.
 
-## Acknowledge
-* We run our experiments based on [veRL](https://github.com/volcengine/verl).
-* We use Qwen2.5 series base model [Qwen2.5](https://github.com/QwenLM/Qwen2.5).
+## Code map
+
+| Path | Role |
+| --- | --- |
+| `examples/data_preprocess/mlebench.py` | Builds MLE RL prompt datasets. |
+| `examples/data_preprocess/*.txt` | Competition instructions, formats, and data snippets. |
+| `scripts/train_tiny_zero_mlebench.sh` | PPO launch configuration. |
+| `verl/trainer/main_ppo.py` | Initializes workers and dispatches MLE rewards. |
+| `verl/trainer/ppo/` | PPO training loop and optimization utilities. |
+| `verl/utils/reward_score/mlebench.py` | Extracts generated code and invokes `mlebench grade-sample`. |
+| `verl/utils/reward_score/interpreter.py` | Runs generated programs and captures execution output. |
+| `verl/workers/`, `verl/single_controller/`, `verl/third_party/` | Shared distributed training and rollout infrastructure. |
 
 ## Citation
-```
-@misc{tinyzero,
-author       = {Jiayi Pan and Junjie Zhang and Xingyao Wang and Lifan Yuan and Hao Peng and Alane Suhr},
-title        = {TinyZero},
-howpublished = {https://github.com/Jiayi-Pan/TinyZero},
-note         = {Accessed: 2025-01-24},
-year         = {2025}
+
+```bibtex
+@article{yang2025reinforcement,
+  title={Reinforcement Learning for Machine Learning Engineering Agents},
+  author={Yang, Sherry and He-Yueya, Joy and Liang, Percy},
+  journal={arXiv preprint arXiv:2509.01684},
+  year={2025},
+  url={https://arxiv.org/abs/2509.01684}
 }
 ```
+
+The inherited implementation retains its upstream copyright notices and [Apache 2.0 license](LICENSE). MLEBench supplies the competition preparation and grading tools; veRL and TinyZero supply the underlying RL infrastructure.

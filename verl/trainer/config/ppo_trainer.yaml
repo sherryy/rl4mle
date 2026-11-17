@@ -1,7 +1,7 @@
 data:
   tokenizer: null
-  train_files: ~/data/rlhf/gsm8k/train.parquet
-  val_files: ~/data/rlhf/gsm8k/test.parquet
+  train_files: ~/data/mlebench/train.parquet
+  val_files: ~/data/mlebench/test.parquet
   prompt_key: prompt
   max_prompt_length: 512
   max_response_length: 512
@@ -148,13 +148,13 @@ algorithm:
 trainer:
   total_epochs: 30
   total_training_steps: null
-  project_name: verl_examples
-  experiment_name: gsm8k
+  project_name: rl-for-mle
+  experiment_name: mlebench
   logger: [ 'console', 'wandb' ]
   nnodes: 1
   n_gpus_per_node: 8
   save_freq: -1
   test_freq: -1
   critic_warmup: 0
-  default_hdfs_dir: ~/experiments/gsm8k/ppo/${trainer.experiment_name}
+  default_hdfs_dir: null
   default_local_dir: checkpoints/${trainer.project_name}/${trainer.experiment_name}

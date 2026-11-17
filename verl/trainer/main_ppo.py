@@ -19,34 +19,44 @@ from verl import DataProto
 import torch
 import ray
 import hydra
-from verl.utils.reward_score import gsm8k, math, multiply, countdown, mlebench
+from verl.utils.reward_score import mlebench
 from verl.trainer.ppo.ray_trainer import RayPPOTrainer
 import shutil
 import os
 
-ALL_TASKS = ['random-acts-of-pizza',
-             'tweet-sentiment-extraction',
-             'spooky-author-identification',
-             'learning-agency-lab-automated-essay-scoring-2',
-             'leaf-classification',
-             'aerial-cactus-identification',
-             'detecting-insults-in-social-commentary',
-             'the-icml-2013-whale-challenge-right-whale-redux',
-             'spaceship-titanic']
+ALL_TASKS = [
+    'aerial-cactus-identification',
+    'chaii-hindi-and-tamil-question-answering',
+    'denoising-dirty-documents',
+    'detecting-insults-in-social-commentary',
+    'dog-breed-identification',
+    'dogs-vs-cats-redux-kernels-edition',
+    'google-quest-challenge',
+    'leaf-classification',
+    'learning-agency-lab-automated-essay-scoring-2',
+    'lmsys-chatbot-arena',
+    'nomad2018-predict-transparent-conductors',
+    'plant-pathology-2020-fgvc7',
+    'predict-volcanic-eruptions-ingv-oe',
+    'random-acts-of-pizza',
+    'spaceship-titanic',
+    'spooky-author-identification',
+    'tabular-playground-series-dec-2021',
+    'tabular-playground-series-may-2022',
+    'text-normalization-challenge-english-language',
+    'text-normalization-challenge-russian-language',
+    'tgs-salt-identification-challenge',
+    'the-icml-2013-whale-challenge-right-whale-redux',
+    'tweet-sentiment-extraction',
+    'us-patent-phrase-to-phrase-matching',
+    'ventilator-pressure-prediction',
+    'whale-categorization-playground',
+]
 
 def _select_rm_score_fn(data_source):
-    if data_source == 'openai/gsm8k':
-        return gsm8k.compute_score
-    elif data_source == 'lighteval/MATH':
-        return math.compute_score
-    elif "multiply" in data_source or "arithmetic" in data_source:
-        return multiply.compute_score
-    elif "countdown" in data_source:
-        return countdown.compute_score
-    elif data_source in ALL_TASKS:
+    if data_source in ALL_TASKS:
         return mlebench.compute_score
-    else:
-        raise NotImplementedError
+    raise NotImplementedError(f'Unsupported MLEBench competition: {data_source}')
 
 
 @ray.remote
@@ -77,22 +87,6 @@ def compute_single_reward(
 
     ground_truth = data_item.non_tensor_batch['reward_model']['ground_truth']
     data_source = data_item.non_tensor_batch['data_source']
-
-    # Your existing score fn
-    from verl.utils.reward_score import gsm8k, math, multiply, countdown, mlebench
-    def _select_rm_score_fn(source):
-        if source == 'openai/gsm8k':
-            return gsm8k.compute_score
-        elif source == 'lighteval/MATH':
-            return math.compute_score
-        elif "multiply" in source or "arithmetic" in source:
-            return multiply.compute_score
-        elif "countdown" in source:
-            return countdown.compute_score
-        elif data_source in ALL_TASKS:
-            return mlebench.compute_score
-        else:
-            raise NotImplementedError
 
     compute_score_fn = _select_rm_score_fn(data_source)
     score = compute_score_fn(solution_str=sequences_str, ground_truth=ground_truth)
